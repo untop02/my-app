@@ -39,13 +39,17 @@ export default App = () => {
         renderItem={({item}) => {
           return (
             <TouchableOpacity>
+             
+              <View style={styles.textAndImage}>
               <Image
+
                 style={styles.image}
                 source={{uri: item.thumbnails.w160}}
               />
               <View style={styles.text}>
                 <Text style={styles.title}>{item.title}</Text>
                 <Text>{item.description}</Text>
+                </View>
               </View>
             </TouchableOpacity>
           );
@@ -58,18 +62,23 @@ export default App = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    flexDirection: 'row',
     backgroundColor: '#fff',
-    flexWrap: 'wrap'
   },
   image: {
-    width: 200,
-    height: 400,
-    backgroundColor: 'lightgrey'
+    width: '50%',
+    height: '100%',
+    backgroundColor: 'lightgrey',
+    alignSelf: 'flex-start',
+  },
+  textAndImage: {
+    flex: 1,
+    backgroundColor: 'lightgrey', padding: 20,
+    marginBottom: 20,
+    flexDirection: 'row',
   },
   text: {
-    backgroundColor: 'lightgrey', padding: 20
+    padding: 20,
+    width: 200,
   },
   title: {
     fontSize: 20,
