@@ -27,12 +27,13 @@ const styles = StyleSheet.create({
   image: {
     width: '50%',
     height: '100%',
-    backgroundColor: 'lightgrey',
+    backgroundColor: '#FFDBAA',
     alignSelf: 'flex-start',
+    borderRadius: 50,
   },
   textAndImage: {
     flex: 1,
-    backgroundColor: 'lightgrey', padding: 20,
+    backgroundColor: '#FFDBAA', padding: 20,
     marginBottom: 20,
     flexDirection: 'row',
   },
