@@ -1,6 +1,7 @@
 import {StatusBar} from 'expo-status-bar';
 import {StyleSheet, SafeAreaView} from 'react-native';
 import List from './components/List';
+
 const App = () => {
   return (
     <>
@@ -11,6 +12,7 @@ const App = () => {
     </>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
