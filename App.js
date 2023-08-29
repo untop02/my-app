@@ -1,22 +1,13 @@
 import {StatusBar} from 'expo-status-bar';
-import {StyleSheet, SafeAreaView} from 'react-native';
-import List from './components/List';
+import Navigator from './navigators/Navigator';
 
 const App = () => {
   return (
-    <>
-      <SafeAreaView style={styles.container}>
-        <List />
-      </SafeAreaView>
-      <StatusBar style="auto" />
-    </>
+      <>
+       <Navigator></Navigator>
+       <StatusBar style="auto" />
+     </>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#fff',
-  },
-})
 
 export default App;
