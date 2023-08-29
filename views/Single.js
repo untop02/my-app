@@ -1,10 +1,24 @@
 import React from 'react';
-import {StyleSheet, SafeAreaView, Text} from 'react-native';
+import {StyleSheet, SafeAreaView, Text, Image, View} from 'react-native';
+import PropTypes from 'prop-types';
+import {mediaUrl} from '../utils/app-config';
 
-const Single = () => {
+const Single = ({route, navigation}) => {
+  const singleMedia = route.params;
   return (
     <SafeAreaView style={styles.container}>
-      <Text>Single</Text>
+      <View style={styles.textAndImage}>
+        <Image
+          style={styles.image}
+          source={{uri: mediaUrl + singleMedia.thumbnails.w160}}
+        />
+          <Text style={styles.title}>{singleMedia.title}</Text>
+          <Text>{singleMedia.description}</Text>
+          <Text>File ID: {singleMedia.file_id}</Text>
+          <Text>User ID: {singleMedia.user_id}</Text>
+          <Text>Time added: {singleMedia.time_added}</Text>
+
+      </View>
     </SafeAreaView>
   );
 };
@@ -16,7 +30,34 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingTop: 40,
+  } ,
+   image: {
+    paddingLeft: '100%',
+    paddingTop: '100%',
+    backgroundColor: 'lightgrey',
   },
+  textAndImage: {
+    width: '100%',
+    flex: 1,
+    backgroundColor: 'lightgrey', padding: 20,
+    marginBottom: 20,
+    flexDirection: 'column',
+    alignItems: 'center', justifyContent: 'start' 
+  },
+  text: {
+    padding: 20,
+    width: 200,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  }
 });
+
+Single.PropTypes = {
+navigation : PropTypes.object,
+route: PropTypes.object
+}
 
 export default Single;

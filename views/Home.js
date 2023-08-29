@@ -1,10 +1,11 @@
 import {StyleSheet, SafeAreaView} from 'react-native';
 import List from '../components/List';
+import PropTypes from 'prop-types';
 
- const Home = () => {
+ const Home = ({navigation}) => {
     return (
       <SafeAreaView style={styles.container}>
-        <List />
+        <List navigation={navigation} />
       </SafeAreaView>
     );
   };
@@ -14,5 +15,9 @@ import List from '../components/List';
       backgroundColor: '#fff',
     },
   })
+
+  Home.propTypes = {
+    navigation: PropTypes.object,
+  };
 
 export default Home;
