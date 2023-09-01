@@ -8,34 +8,42 @@ import {
 import PropTypes from 'prop-types';
 import {MainContext} from '../contexts/MainContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {postLogin} from '../hooks/ApiHooks';
+import { useAuthentication } from '../hooks/ApiHooks';
 
 const Login = ({navigation}) => {
     // props is needed for navigation
     const {setIsLoggedIn} = useContext(MainContext);
-
+    const {postLogin} = useAuthentication();
+    
     const checkToken = async () => {
         const token = await AsyncStorage.getItem('userToken');
         try {
-            if(token === 'abcd'){
+            if (token === 'abc') {
                 setIsLoggedIn(true);
             }
-        }catch(error){
+        } catch (error) {
             console.error(error);
         }
-};
+    };
 
-    useEffect(()=> {
+    useEffect(() => {
         checkToken();
     }, []);
 
     const logIn = async () => {
-        try{
-        console.log('Login button pressed');
-        await AsyncStorage.setItem('userToken', 'abc');
-        setIsLoggedIn(true);
-    }catch(error){
-    console.error(error);
-    };
+        try {
+            const loginResponse = await postLogin(
+                {
+                    username: 'masa',
+                    password: 'gege'
+                })
+            await AsyncStorage.setItem('userToken', 'abc');
+            setIsLoggedIn(true);
+        } catch (error) {
+            console.error(error);
+            // TODO: notify user of failed login.
+        };
     };
     return (
         <View style={styles.container}>
