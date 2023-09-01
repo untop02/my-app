@@ -1,13 +1,15 @@
 import {Image, Text, TouchableOpacity, View, StyleSheet} from 'react-native';
 import PropTypes from 'prop-types';
 import {mediaUrl} from '../utils/app-config';
+import React from 'react';
 
 const ListItem = ({singleMedia, navigation}) => {
   return (
-    <TouchableOpacity onPress={() => {
-      console.log('touched!', singleMedia.title);
-      navigation.navigate('Single', singleMedia);
-    }}
+    <TouchableOpacity
+      onPress={() => {
+        console.log('touched!', singleMedia.title);
+        navigation.navigate('Single', singleMedia);
+      }}
     >
       <View style={styles.textAndImage}>
         <Image
@@ -25,7 +27,7 @@ const ListItem = ({singleMedia, navigation}) => {
 
 ListItem.propTypes = {
   singleMedia: PropTypes.object,
-  navigation: PropTypes.object
+  navigation: PropTypes.object,
 };
 
 const styles = StyleSheet.create({
@@ -37,7 +39,8 @@ const styles = StyleSheet.create({
   },
   textAndImage: {
     flex: 1,
-    backgroundColor: 'lightgrey', padding: 20,
+    backgroundColor: 'lightgrey',
+    padding: 20,
     marginBottom: 20,
     flexDirection: 'row',
   },
@@ -47,7 +50,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    fontWeight: 'bold'
-  }
+    fontWeight: 'bold',
+  },
 });
 export default ListItem;

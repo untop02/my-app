@@ -1,69 +1,54 @@
 import React, {useContext, useEffect} from 'react';
-import {
-    StyleSheet,
-    View,
-    Text,
-    Button,
-} from 'react-native';
+import {StyleSheet, View, Text} from 'react-native';
 import PropTypes from 'prop-types';
 import {MainContext} from '../contexts/MainContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {postLogin} from '../hooks/ApiHooks';
-import { useAuthentication } from '../hooks/ApiHooks';
+import {useUser} from '../hooks/ApiHooks';
+import LoginForm from '../components/LoginForm';
 
 const Login = ({navigation}) => {
-    // props is needed for navigation
-    const {setIsLoggedIn} = useContext(MainContext);
-    const {postLogin} = useAuthentication();
+  // props is needed for navigation
+  const {setIsLoggedIn, setUser} = useContext(MainContext);
+  const {getUserByToken} = useUser();
 
-    const checkToken = async () => {
-        const token = await AsyncStorage.getItem('userToken');
-        try {
-            if (token === 'abc') {
-                setIsLoggedIn(true);
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    };
+  const checkToken = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      // hardcoded token validation
+      const userData = await getUserByToken(token);
+      console.log('userdata', userData);
+      if (userData) {
+        setIsLoggedIn(true);
+        setUser(userData);
+      }
+    } catch (error) {
+      console.log('checkToken', error);
+    }
+  };
 
-    useEffect(() => {
-        checkToken();
-    }, []);
+  useEffect(() => {
+    checkToken();
+  }, []);
 
-    const logIn = async () => {
-        try {
-            const loginResponse = await postLogin(
-                {
-                    username: 'untop',
-                    password: 'agga2'
-                })
-            await AsyncStorage.setItem('userToken', 'abc');
-            setIsLoggedIn(true);
-        } catch (error) {
-            console.error(error);
-            // TODO: notify user of failed login.
-        };
-    };
-    return (
-        <View style={styles.container}>
-            <Text>Login</Text>
-            <Button title="Sign in!" onPress={logIn} />
-        </View>
-    );
+  return (
+    <View style={styles.container}>
+      <Text>Login</Text>
+      <LoginForm />
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });
 
 Login.propTypes = {
-    navigation: PropTypes.object,
+  navigation: PropTypes.object,
 };
 
 export default Login;
