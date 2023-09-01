@@ -15,7 +15,7 @@ const Login = ({navigation}) => {
     // props is needed for navigation
     const {setIsLoggedIn} = useContext(MainContext);
     const {postLogin} = useAuthentication();
-    
+
     const checkToken = async () => {
         const token = await AsyncStorage.getItem('userToken');
         try {
@@ -35,8 +35,8 @@ const Login = ({navigation}) => {
         try {
             const loginResponse = await postLogin(
                 {
-                    username: 'masa',
-                    password: 'gege'
+                    username: 'untop',
+                    password: 'agga2'
                 })
             await AsyncStorage.setItem('userToken', 'abc');
             setIsLoggedIn(true);
