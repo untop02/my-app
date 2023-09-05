@@ -1,7 +1,8 @@
 import React from 'react';
-import {StyleSheet, SafeAreaView, Text, Image, View} from 'react-native';
 import PropTypes from 'prop-types';
+import {Image, SafeAreaView, StyleSheet, Text} from 'react-native';
 import {mediaUrl} from '../utils/app-config';
+import {View} from 'react-native-web';
 
 const Single = ({route, navigation}) => {
   const singleMedia = route.params;
@@ -12,12 +13,11 @@ const Single = ({route, navigation}) => {
           style={styles.image}
           source={{uri: mediaUrl + singleMedia.thumbnails.w160}}
         />
-          <Text style={styles.title}>{singleMedia.title}</Text>
-          <Text>{singleMedia.description}</Text>
-          <Text>File ID: {singleMedia.file_id}</Text>
-          <Text>User ID: {singleMedia.user_id}</Text>
-          <Text>Time added: {singleMedia.time_added}</Text>
-
+        <Text style={styles.title}>{singleMedia.title}</Text>
+        <Text>{singleMedia.description}</Text>
+        <Text>File ID: {singleMedia.file_id}</Text>
+        <Text>User ID: {singleMedia.user_id}</Text>
+        <Text>Time added: {singleMedia.time_added}</Text>
       </View>
     </SafeAreaView>
   );
@@ -30,8 +30,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingTop: 40,
-  } ,
-   image: {
+  },
+  image: {
     paddingLeft: '100%',
     paddingTop: '100%',
     backgroundColor: 'lightgrey',
@@ -39,10 +39,12 @@ const styles = StyleSheet.create({
   textAndImage: {
     width: '100%',
     flex: 1,
-    backgroundColor: 'lightgrey', padding: 20,
+    backgroundColor: 'lightgrey',
+    padding: 20,
     marginBottom: 20,
     flexDirection: 'column',
-    alignItems: 'center', justifyContent: 'start' 
+    alignItems: 'center',
+    justifyContent: 'start',
   },
   text: {
     padding: 20,
@@ -52,12 +54,12 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 20,
-  }
+  },
 });
 
-Single.PropTypes = {
-navigation : PropTypes.object,
-route: PropTypes.object
-}
+Single.propTypes = {
+  navigation: PropTypes.object,
+  route: PropTypes.object,
+};
 
 export default Single;

@@ -25,14 +25,11 @@ const LoginForm = () => {
     try {
       const loginResponse = await postLogin(loginData);
       console.log('login response', loginResponse);
-      // TODO: fix dofetch() to display errors from API (e.g. when bad user/pw)
-      // use loginResponse.user for storing token & userdata
       await AsyncStorage.setItem('userToken', loginResponse.token);
       setIsLoggedIn(true);
       setUser(loginResponse.user);
     } catch (error) {
       console.error(error);
-      // TODO: notify user about failed login?
     }
   };
 
