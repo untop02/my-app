@@ -9,10 +9,10 @@ const useMedia = () => {
       const json = await doFetch(apiUrl + 'media');
 
       const mediaFiles = await Promise.all(
-          json.map(async (item) => {
-            const fileData = await doFetch(apiUrl + 'media/' + item.file_id);
-            return fileData;
-          }),
+        json.map(async (item) => {
+          const fileData = await doFetch(apiUrl + 'media/' + item.file_id);
+          return fileData;
+        }),
       );
       setMediaArray(mediaFiles);
     } catch (error) {
@@ -29,17 +29,13 @@ const useMedia = () => {
 
 const useAuthentication = () => {
   const postLogin = async (user) => {
-    try {
-      return await doFetch(apiUrl + 'login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(user),
-      });
-    } catch (error) {
-      console.error('postLogin error' + error);
-    }
+    return await doFetch(apiUrl + 'login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(user),
+    });
   };
   return {postLogin};
 };
@@ -58,6 +54,21 @@ const registerUser = () => {
       console.error('postLogin error' + error);
     }
   };
+  const putUser = async (user, token) => {
+    console.log('haloo');
+    try {
+      return await doFetch(apiUrl + 'users', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-access-token': token,
+        },
+        body: JSON.stringify(user),
+      });
+    } catch (error) {
+      console.error('postLogin error' + error);
+    }
+  };
   const checkUsername = async (username) => {
     try {
       const response = await doFetch(`${apiUrl}users/username/${username}`);
@@ -66,7 +77,7 @@ const registerUser = () => {
       throw new Error('checkUsername error', error.message);
     }
   };
-  return {postUser, checkUsername};
+  return {postUser, checkUsername, putUser};
 };
 
 const useUser = () => {

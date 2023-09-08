@@ -1,11 +1,16 @@
 import {useForm, Controller} from 'react-hook-form';
-import {registerUser} from '../hooks/ApiHooks';
-import React from 'react';
+import {registerUser, useUser} from '../hooks/ApiHooks';
+import React, {useContext} from 'react';
 import {Card, Input, Button} from '@rneui/base';
 import {Alert} from 'react-native';
 import PropTypes from 'prop-types';
-const RegisterForm = ({setToggleRegister}) => {
-  const {postUser, checkUsername} = registerUser();
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {MainContext} from '../contexts/MainContext';
+
+const ProfileForm = ({user}) => {
+  const {putUser, checkUsername} = registerUser();
+  const {getUserByToken} = useUser();
+  const {setUser} = useContext(MainContext);
 
   const {
     control,
@@ -14,21 +19,31 @@ const RegisterForm = ({setToggleRegister}) => {
     formState: {errors},
   } = useForm({
     defaultValues: {
-      username: '',
+      ...user,
       password: '',
-      email: '',
-      full_name: '',
+      confirm_password: '',
     },
     mode: 'onBlur',
   });
 
-  const register = async (registerData) => {
+  const update = async (updateData) => {
+    console.log('Updating', updateData);
     try {
-      delete registerData.confirm_password;
-      const registerResponse = await postUser(registerData);
-      console.log('register response', registerResponse);
-      Alert.alert('Success', registerResponse.message);
-      setToggleRegister(false);
+      delete updateData.confirm_password;
+      for (const [i, value] of Object.entries(updateData)) {
+        console.log(i, value);
+        if (value === '') {
+          delete updateData[i];
+        }
+      }
+      console.log('toimiiko');
+      const token = await AsyncStorage.getItem('userToken');
+      console.log('token', token);
+      const updateResult = await putUser(updateData, token);
+      console.log('update response', updateResult);
+      Alert.alert('Success', updateResult.message);
+      const userData = await getUserByToken(token);
+      setUser(userData);
     } catch (error) {
       Alert.alert(error.message);
     }
@@ -39,13 +54,13 @@ const RegisterForm = ({setToggleRegister}) => {
       <Controller
         control={control}
         rules={{
-          required: true,
           minLength: {value: 3, message: 'min length is 3 characters'},
-          required: {value: true, message: 'this is required'},
           validate: async (value) => {
             try {
+              if (value.length < 3) {
+                return;
+              }
               const isAvailable = await checkUsername(value);
-              console.log(value);
               return isAvailable ? isAvailable : 'Username taken';
             } catch (error) {
               console.error(error);
@@ -68,7 +83,6 @@ const RegisterForm = ({setToggleRegister}) => {
         control={control}
         rules={{
           maxLength: 100,
-          required: {value: true, message: 'is required'},
           minLength: {value: 3, message: 'min length is 3 characters'},
         }}
         render={({field: {onChange, onBlur, value}}) => (
@@ -87,11 +101,11 @@ const RegisterForm = ({setToggleRegister}) => {
         control={control}
         rules={{
           maxLength: 100,
-          required: {value: true, message: 'is required'},
           validate: (value) => {
             const {password} = getValues();
-            // console.log('getValues: ', values);
-            console.log(password);
+            if (password.length < 5) {
+              return;
+            }
             return value === password ? true : 'Passwords dont match';
           },
         }}
@@ -110,7 +124,6 @@ const RegisterForm = ({setToggleRegister}) => {
       <Controller
         control={control}
         rules={{
-          required: {value: true, message: 'is required'},
           pattern: {
             value: /\S+@\S+\.\S+$/,
             message: 'must be a valid email',
@@ -131,9 +144,7 @@ const RegisterForm = ({setToggleRegister}) => {
       <Controller
         control={control}
         rules={{
-          required: true,
           minLength: {value: 3, message: 'min length is 3 characters'},
-          required: {value: true, message: 'this is required'},
         }}
         render={({field: {onChange, onBlur, value}}) => (
           <Input
@@ -148,13 +159,13 @@ const RegisterForm = ({setToggleRegister}) => {
         name="full_name"
       />
 
-      <Button title="Submit" onPress={handleSubmit(register)} />
+      <Button title="Submit" onPress={handleSubmit(update)} />
     </Card>
   );
 };
 
-RegisterForm.propTypes = {
-  setToggleRegister: PropTypes.func,
+ProfileForm.propTypes = {
+  user: PropTypes.object,
 };
 
-export default RegisterForm;
+export default ProfileForm;

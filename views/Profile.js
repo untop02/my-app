@@ -1,9 +1,12 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Button, SafeAreaView, StyleSheet, Text, Image} from 'react-native';
+import {ScrollView} from 'react-native';
 import {MainContext} from '../contexts/MainContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useTag} from '../hooks/ApiHooks';
 import {mediaUrl} from '../utils/app-config';
+import {Button} from '@rneui/themed';
+import ProfileForm from '../components/ProfileForm';
+import {Card, Text} from '@rneui/base';
 
 const Profile = (props) => {
   const {setIsLoggedIn, user} = useContext(MainContext);
@@ -31,34 +34,22 @@ const Profile = (props) => {
     laodAvatar();
   });
   return (
-    <SafeAreaView style={styles.container}>
-      <Text>Profile view</Text>
-      <Button title="Log out!" onPress={logOut} />
-      <Image
-        style={styles.avatar}
-        source={{
-          uri: avatar,
-        }}
-      />
-      <Text>{user.username}</Text>
-      <Text>{user.email}</Text>
-      <Text>{user.full_name}</Text>
-    </SafeAreaView>
+    <ScrollView>
+      <Card>
+        <Card.Title>Profile view</Card.Title>
+        <Card.Image
+          source={{
+            uri: avatar,
+          }}
+        />
+        <Text>{user.username}</Text>
+        <Text>{user.email}</Text>
+        <Text>{user.full_name}</Text>
+        <Button title="Log out!" onPress={logOut} />
+        <ProfileForm user={user}/>
+      </Card>
+    </ScrollView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingTop: 40,
-  },
-  avatar: {
-    height: 300,
-    width: 300,
-  },
-});
 
 export default Profile;

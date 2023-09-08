@@ -38,7 +38,11 @@ const Login = ({navigation}) => {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <TouchableOpacity>
-          {toggleRegister ? <RegisterForm /> : <LoginForm />}
+          {toggleRegister ? (
+            <RegisterForm setToggleRegister={setToggleRegister} />
+          ) : (
+            <LoginForm />
+          )}
           <Button
             onPress={() => {
               setToggleRegister(!toggleRegister);
