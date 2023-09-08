@@ -1,10 +1,11 @@
-import {View, Text, TextInput, Button} from 'react-native';
+import {Text} from 'react-native';
 import {useForm, Controller} from 'react-hook-form';
 import {registerUser} from '../hooks/ApiHooks';
 import React from 'react';
+import {Card, Input, Button} from '@rneui/base';
 
 const RegisterForm = () => {
-  const {postUser} = registerUser();
+  const {postUser, checkUsername} = registerUser();
 
   const {
     control,
@@ -17,6 +18,7 @@ const RegisterForm = () => {
       email: '',
       full_name: '',
     },
+    mode: 'onBlur',
   });
 
   const register = async (registerData) => {
@@ -29,32 +31,47 @@ const RegisterForm = () => {
   };
 
   return (
-    <View>
+    <Card>
       <Controller
         control={control}
         rules={{
           required: true,
+          minLength: 3,
+          validate: async (value) => {
+            try {
+              const isAvailable = await checkUsername(value);
+              console.log(value);
+              return isAvailable ? isAvailable : 'Username taken';
+            } catch (error) {
+              console.error(error);
+            }
+          },
         }}
         render={({field: {onChange, onBlur, value}}) => (
-          <TextInput
+          <Input
             placeholder="Username"
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
             autoCapitalize="none"
+            errorMessage={errors.username.message}
           />
         )}
         name="username"
       />
       {errors.username && <Text>This is required.</Text>}
 
+      {errors.username?.type === 'required' && <Text>is required</Text>}
+      {errors.username?.type === 'minLength' && (
+        <Text>min length is 3 characters</Text>
+      )}
       <Controller
         control={control}
         rules={{
           maxLength: 100,
         }}
         render={({field: {onChange, onBlur, value}}) => (
-          <TextInput
+          <Input
             placeholder="password"
             secureTextEntry
             onBlur={onBlur}
@@ -70,7 +87,7 @@ const RegisterForm = () => {
           required: true,
         }}
         render={({field: {onChange, onBlur, value}}) => (
-          <TextInput
+          <Input
             placeholder="Email"
             onBlur={onBlur}
             onChangeText={onChange}
@@ -86,7 +103,7 @@ const RegisterForm = () => {
           required: true,
         }}
         render={({field: {onChange, onBlur, value}}) => (
-          <TextInput
+          <Input
             placeholder="Full Name"
             onBlur={onBlur}
             onChangeText={onChange}
@@ -98,7 +115,7 @@ const RegisterForm = () => {
       />
 
       <Button title="Submit" onPress={handleSubmit(register)} />
-    </View>
+    </Card>
   );
 };
 

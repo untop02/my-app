@@ -1,16 +1,19 @@
-import React, {useContext, useEffect} from 'react';
-import {StyleSheet, Text, KeyboardAvoidingView} from 'react-native';
+import React, {useContext, useEffect, useState} from 'react';
+import {KeyboardAvoidingView} from 'react-native';
 import PropTypes from 'prop-types';
 import {MainContext} from '../contexts/MainContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useUser} from '../hooks/ApiHooks';
 import LoginForm from '../components/LoginForm';
 import RegisterForm from '../components/RegisterForm';
+import {Button} from '@rneui/themed';
+import {Card} from '@rneui/base';
 
 const Login = ({navigation}) => {
   // props is needed for navigation
   const {setIsLoggedIn, setUser} = useContext(MainContext);
   const {getUserByToken} = useUser();
+  const [toggleRegister, setToggleRegister] = useState(false);
 
   const checkToken = async () => {
     try {
@@ -22,9 +25,7 @@ const Login = ({navigation}) => {
         setIsLoggedIn(true);
         setUser(userData);
       }
-    } catch (error) {
-      console.log('checkToken', error);
-    }
+    } catch (error) {}
   };
 
   useEffect(() => {
@@ -32,25 +33,22 @@ const Login = ({navigation}) => {
   }, []);
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={styles.container}
-    >
-      <Text>Login</Text>
-      <LoginForm />
-      <RegisterForm/>
-    </KeyboardAvoidingView>
+    <Card>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+        {toggleRegister ? <RegisterForm /> : <LoginForm />}
+        <Button
+          onPress={() => {
+            setToggleRegister(!toggleRegister);
+          }}
+        >
+          {toggleRegister ? 'or login' : 'or register'}
+        </Button>
+      </KeyboardAvoidingView>
+    </Card>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
 
 Login.propTypes = {
   navigation: PropTypes.object,

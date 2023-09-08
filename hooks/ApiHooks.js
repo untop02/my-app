@@ -58,7 +58,15 @@ const registerUser = () => {
       console.error('postLogin error' + error);
     }
   };
-  return {postUser};
+  const checkUsername = async (username) => {
+    try {
+      const response = await doFetch(`${apiUrl}users/username/${username}`);
+      return response.available;
+    } catch (error) {
+      throw new Error('checkUsername error', error.message);
+    }
+  };
+  return {postUser, checkUsername};
 };
 
 const useUser = () => {
