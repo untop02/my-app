@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {KeyboardAvoidingView} from 'react-native';
+import {KeyboardAvoidingView, TouchableOpacity} from 'react-native';
 import PropTypes from 'prop-types';
 import {MainContext} from '../contexts/MainContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -37,14 +37,16 @@ const Login = ({navigation}) => {
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        {toggleRegister ? <RegisterForm /> : <LoginForm />}
-        <Button
-          onPress={() => {
-            setToggleRegister(!toggleRegister);
-          }}
-        >
-          {toggleRegister ? 'or login' : 'or register'}
-        </Button>
+        <TouchableOpacity>
+          {toggleRegister ? <RegisterForm /> : <LoginForm />}
+          <Button
+            onPress={() => {
+              setToggleRegister(!toggleRegister);
+            }}
+          >
+            {toggleRegister ? 'or login' : 'or register'}
+          </Button>
+        </TouchableOpacity>
       </KeyboardAvoidingView>
     </Card>
   );

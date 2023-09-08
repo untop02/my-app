@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useContext} from 'react';
 import {MainContext} from '../contexts/MainContext';
 import React from 'react';
-import {Button} from '@rneui/themed';
+import {Button, Input} from '@rneui/themed';
 
 const LoginForm = () => {
   const {postLogin} = useAuthentication();
@@ -20,6 +20,7 @@ const LoginForm = () => {
       username: '',
       password: '',
     },
+    mode: 'onBlur',
   });
 
   const logIn = async (loginData) => {
@@ -40,32 +41,35 @@ const LoginForm = () => {
         control={control}
         rules={{
           required: true,
+          required: {value: true, message: 'this is required'},
         }}
         render={({field: {onChange, onBlur, value}}) => (
-          <TextInput
+          <Input
             placeholder="Username"
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
             autoCapitalize="none"
+            errorMessage={errors.username?.message}
           />
         )}
         name="username"
       />
-      {errors.username && <Text>This is required.</Text>}
 
       <Controller
         control={control}
         rules={{
           maxLength: 100,
+          required: {value: true, message: 'this is required'},
         }}
         render={({field: {onChange, onBlur, value}}) => (
-          <TextInput
+          <Input
             placeholder="password"
             secureTextEntry
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
+            errorMessage={errors.username?.message}
           />
         )}
         name="password"

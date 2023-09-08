@@ -1,4 +1,3 @@
-import {Text} from 'react-native';
 import {useForm, Controller} from 'react-hook-form';
 import {registerUser} from '../hooks/ApiHooks';
 import React from 'react';
@@ -10,6 +9,7 @@ const RegisterForm = () => {
   const {
     control,
     handleSubmit,
+    getValues,
     formState: {errors},
   } = useForm({
     defaultValues: {
@@ -36,7 +36,8 @@ const RegisterForm = () => {
         control={control}
         rules={{
           required: true,
-          minLength: 3,
+          minLength: {value: 3, message: 'min length is 3 characters'},
+          required: {value: true, message: 'this is required'},
           validate: async (value) => {
             try {
               const isAvailable = await checkUsername(value);
@@ -59,14 +60,12 @@ const RegisterForm = () => {
         )}
         name="username"
       />
-      {errors.username?.type === 'required' && <Text>This is required.</Text>}
-      {errors.username?.type === 'minLength' && (
-        <Text>min length is 3 characters</Text>
-      )}
       <Controller
         control={control}
         rules={{
           maxLength: 100,
+          required: {value: true, message: 'is required'},
+          minLength: {value: 3, message: 'min length is 3 characters'},
         }}
         render={({field: {onChange, onBlur, value}}) => (
           <Input
@@ -75,6 +74,7 @@ const RegisterForm = () => {
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
+            errorMessage={errors.password?.message}
           />
         )}
         name="password"
@@ -82,7 +82,35 @@ const RegisterForm = () => {
       <Controller
         control={control}
         rules={{
-          required: true,
+          maxLength: 100,
+          required: {value: true, message: 'is required'},
+          validate: (value) => {
+            const {password} = getValues();
+            // console.log('getValues: ', values);
+            console.log(password);
+            return value === password ? true : 'Passwords dont match';
+          },
+        }}
+        render={({field: {onChange, onBlur, value}}) => (
+          <Input
+            placeholder="confirm password"
+            secureTextEntry
+            onBlur={onBlur}
+            onChangeText={onChange}
+            value={value}
+            errorMessage={errors.confirm_password?.message}
+          />
+        )}
+        name="confirm_password"
+      />
+      <Controller
+        control={control}
+        rules={{
+          required: {value: true, message: 'is required'},
+          pattern: {
+            value: /@/,
+            message: 'must be a valid email',
+          },
         }}
         render={({field: {onChange, onBlur, value}}) => (
           <Input
@@ -91,6 +119,7 @@ const RegisterForm = () => {
             onChangeText={onChange}
             value={value}
             autoCapitalize="none"
+            errorMessage={errors.email?.message}
           />
         )}
         name="email"
@@ -99,6 +128,8 @@ const RegisterForm = () => {
         control={control}
         rules={{
           required: true,
+          minLength: {value: 3, message: 'min length is 3 characters'},
+          required: {value: true, message: 'this is required'},
         }}
         render={({field: {onChange, onBlur, value}}) => (
           <Input
@@ -107,6 +138,7 @@ const RegisterForm = () => {
             onChangeText={onChange}
             value={value}
             autoCapitalize="none"
+            errorMessage={errors.full_name?.message}
           />
         )}
         name="full_name"
