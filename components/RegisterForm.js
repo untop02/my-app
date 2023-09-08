@@ -54,14 +54,12 @@ const RegisterForm = () => {
             onChangeText={onChange}
             value={value}
             autoCapitalize="none"
-            errorMessage={errors.username.message}
+            errorMessage={errors.username?.message}
           />
         )}
         name="username"
       />
-      {errors.username && <Text>This is required.</Text>}
-
-      {errors.username?.type === 'required' && <Text>is required</Text>}
+      {errors.username?.type === 'required' && <Text>This is required.</Text>}
       {errors.username?.type === 'minLength' && (
         <Text>min length is 3 characters</Text>
       )}
