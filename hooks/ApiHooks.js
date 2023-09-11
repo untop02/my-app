@@ -9,10 +9,10 @@ const useMedia = () => {
       const json = await doFetch(apiUrl + 'media');
 
       const mediaFiles = await Promise.all(
-          json.map(async (item) => {
-            const fileData = await doFetch(apiUrl + 'media/' + item.file_id);
-            return fileData;
-          }),
+        json.map(async (item) => {
+          const fileData = await doFetch(apiUrl + 'media/' + item.file_id);
+          return fileData;
+        }),
       );
       setMediaArray(mediaFiles);
     } catch (error) {
@@ -24,7 +24,20 @@ const useMedia = () => {
     loadMedia();
   }, []);
 
-  return {mediaArray};
+  const postMedia = async (mediaData, token) => {
+
+    const options = {
+      method: 'POST',
+      headers: {
+        'x-access-token': token,
+      },
+      body: mediaData,
+    };
+    const uploadResult = await doFetch(apiUrl + 'media', options);
+    return uploadResult;
+  };
+
+  return {mediaArray, postMedia};
 };
 
 const useAuthentication = () => {
