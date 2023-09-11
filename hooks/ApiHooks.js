@@ -9,10 +9,10 @@ const useMedia = () => {
       const json = await doFetch(apiUrl + 'media');
 
       const mediaFiles = await Promise.all(
-        json.map(async (item) => {
-          const fileData = await doFetch(apiUrl + 'media/' + item.file_id);
-          return fileData;
-        }),
+          json.map(async (item) => {
+            const fileData = await doFetch(apiUrl + 'media/' + item.file_id);
+            return fileData;
+          }),
       );
       setMediaArray(mediaFiles);
     } catch (error) {
