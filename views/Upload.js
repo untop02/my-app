@@ -6,17 +6,17 @@ import {Alert, StyleSheet} from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import {Video} from 'expo-av';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useMedia} from '../hooks/ApiHooks';
+import {useMedia, useTag} from '../hooks/ApiHooks';
 import PropTypes from 'prop-types';
 import {MainContext} from '../contexts/MainContext';
-import {placeholderImage} from '../utils/app-config';
+import {appId, placeholderImage} from '../utils/app-config';
 
 const Upload = ({navigation}) => {
   const {update, setUpdate} = useContext(MainContext);
   const [image, setImage] = useState(placeholderImage);
   const [type, setType] = useState('image');
   const {postMedia, loading} = useMedia();
-
+  const {postTag} = useTag();
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -48,6 +48,13 @@ const Upload = ({navigation}) => {
       const token = await AsyncStorage.getItem('userToken');
       const response = await postMedia(formData, token);
       console.log('lataus', response);
+      await postTag(
+        {
+          file_id: response.file_id,
+          tag: appId,
+        },
+        token,
+      );
       setUpdate(!update);
       Alert.alert('Upload', `${response.message}, ${response.file_id}`, [
         {
@@ -62,18 +69,17 @@ const Upload = ({navigation}) => {
       console.error(error);
     }
   };
+
   const resetForm = () => {
-    console.log(errors);
     setImage(placeholderImage);
     setType('image');
-    setValue('title', '');
+    reset();
   };
 
   const {
     control,
     handleSubmit,
     formState: {errors},
-    setValue,
   } = useForm({
     defaultValues: {
       title: '',
@@ -133,18 +139,18 @@ const Upload = ({navigation}) => {
       />
       <Button title="Choose Media" onPress={pickImage} style={styles.button} />
       <Button
-        title="Reset Form"
-        onPress={resetForm}
-        color={'error'}
-        style={styles.button}
-      />
-      <Button
         loading={loading}
         disabled={
           image === placeholderImage || errors.description || errors.title
         }
         title="Upload"
         onPress={handleSubmit(upload)}
+        style={styles.button}
+      />
+      <Button
+        title="Reset Form"
+        onPress={resetForm}
+        color={'error'}
         style={styles.button}
       />
     </Card>
