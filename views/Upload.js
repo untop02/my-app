@@ -1,17 +1,21 @@
 import {Card} from '@rneui/base';
 import {Button, Input} from '@rneui/themed';
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {Controller, useForm} from 'react-hook-form';
-import {StyleSheet} from 'react-native';
+import {Alert, StyleSheet} from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import {Video} from 'expo-av';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useMedia} from '../hooks/ApiHooks';
+import PropTypes from 'prop-types';
+import {MainContext} from '../contexts/MainContext';
+import {placeholderImage} from '../utils/app-config';
 
-const Upload = () => {
-  const [image, setImage] = useState(null);
+const Upload = ({navigation}) => {
+  const {update, setUpdate} = useContext(MainContext);
+  const [image, setImage] = useState(placeholderImage);
   const [type, setType] = useState('image');
-  const {postMedia} = useMedia();
+  const {postMedia, loading} = useMedia();
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -44,15 +48,32 @@ const Upload = () => {
       const token = await AsyncStorage.getItem('userToken');
       const response = await postMedia(formData, token);
       console.log('lataus', response);
+      setUpdate(!update);
+      Alert.alert('Upload', `${response.message}, ${response.file_id}`, [
+        {
+          text: 'Ok',
+          onPress: () => {
+            resetForm;
+            navigation.navigate('Home');
+          },
+        },
+      ]);
     } catch (error) {
       console.error(error);
     }
+  };
+  const resetForm = () => {
+    console.log(errors);
+    setImage(placeholderImage);
+    setType('image');
+    setValue('title', '');
   };
 
   const {
     control,
     handleSubmit,
     formState: {errors},
+    setValue,
   } = useForm({
     defaultValues: {
       title: '',
@@ -112,6 +133,16 @@ const Upload = () => {
       />
       <Button title="Choose Media" onPress={pickImage} style={styles.button} />
       <Button
+        title="Reset Form"
+        onPress={resetForm}
+        color={'error'}
+        style={styles.button}
+      />
+      <Button
+        loading={loading}
+        disabled={
+          image === placeholderImage || errors.description || errors.title
+        }
         title="Upload"
         onPress={handleSubmit(upload)}
         style={styles.button}
@@ -132,5 +163,9 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
 });
+
+Upload.propTypes = {
+  navigation: PropTypes.object,
+};
 
 export default Upload;

@@ -1,8 +1,9 @@
 import {useEffect, useState} from 'react';
 import {apiUrl} from '../utils/app-config';
 import {doFetch} from '../utils/functions';
-const useMedia = () => {
+const useMedia = (update) => {
   const [mediaArray, setMediaArray] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const loadMedia = async () => {
     try {
@@ -22,10 +23,10 @@ const useMedia = () => {
 
   useEffect(() => {
     loadMedia();
-  }, []);
+  }, [update]);
 
   const postMedia = async (mediaData, token) => {
-
+    setLoading(true);
     const options = {
       method: 'POST',
       headers: {
@@ -34,10 +35,11 @@ const useMedia = () => {
       body: mediaData,
     };
     const uploadResult = await doFetch(apiUrl + 'media', options);
+    setLoading(false);
     return uploadResult;
   };
 
-  return {mediaArray, postMedia};
+  return {mediaArray, postMedia, loading};
 };
 
 const useAuthentication = () => {

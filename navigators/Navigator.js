@@ -16,13 +16,13 @@ const Stack = createNativeStackNavigator();
 const Tabscreen = () => {
   return (
     <Tab.Navigator>
+      <Tab.Screen name="Home" component={Home} />
+      <Tab.Screen name="Profile" component={Profile} />
       <Tab.Screen
         name="Upload"
         component={Upload}
         options={<Icon name="cloud-upload" />}
       ></Tab.Screen>
-      <Tab.Screen name="Home" component={Home} />
-      <Tab.Screen name="Profile" component={Profile} />
     </Tab.Navigator>
   );
 };

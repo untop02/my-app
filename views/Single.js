@@ -1,15 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Image, SafeAreaView, StyleSheet, Text} from 'react-native';
+import {SafeAreaView, StyleSheet, Text} from 'react-native';
 import {mediaUrl} from '../utils/app-config';
-import {View} from 'react-native-web';
+import {Card} from '@rneui/base';
 
 const Single = ({route, navigation}) => {
   const singleMedia = route.params;
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.textAndImage}>
-        <Image
+      <Card style={styles.textAndImage}>
+        <Card.Image
           style={styles.image}
           source={{uri: mediaUrl + singleMedia.thumbnails.w160}}
         />
@@ -18,7 +18,7 @@ const Single = ({route, navigation}) => {
         <Text>File ID: {singleMedia.file_id}</Text>
         <Text>User ID: {singleMedia.user_id}</Text>
         <Text>Time added: {singleMedia.time_added}</Text>
-      </View>
+      </Card>
     </SafeAreaView>
   );
 };
@@ -34,7 +34,6 @@ const styles = StyleSheet.create({
   image: {
     paddingLeft: '100%',
     paddingTop: '100%',
-    backgroundColor: 'lightgrey',
   },
   textAndImage: {
     width: '100%',
