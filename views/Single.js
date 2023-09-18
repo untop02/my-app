@@ -5,11 +5,14 @@ import {formatDate} from '../utils/functions';
 import {Card, Icon, Text, ListItem} from '@rneui/themed';
 import {Video} from 'expo-av';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useUser} from '../hooks/ApiHooks';
+import {useFavourite, useUser} from '../hooks/ApiHooks';
+import {Button} from '@rneui/base';
 
 const Single = ({route, navigation}) => {
   const [owner, setOwner] = useState({});
   const {getUserById} = useUser();
+  const {postFavourite, getFavouritesById, deleteFavourite} = useFavourite();
+
   const {
     title,
     description,
@@ -18,6 +21,7 @@ const Single = ({route, navigation}) => {
     user_id: userId,
     filesize,
     media_type: mediaType,
+    file_id: fileId,
   } = route.params;
 
   // fetch owner info
@@ -26,6 +30,16 @@ const Single = ({route, navigation}) => {
       const token = await AsyncStorage.getItem('userToken');
       const ownerData = await getUserById(userId, token);
       setOwner(ownerData);
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
+
+  const createFavourite = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      const response = await postFavourite({file_id: fileId}, token);
+      console.log('createFavourite', response);
     } catch (error) {
       console.error(error.message);
     }
@@ -68,6 +82,9 @@ const Single = ({route, navigation}) => {
       <ListItem>
         <Icon name="person" />
         <Text>username: {owner.username}</Text>
+      </ListItem>
+      <ListItem>
+        <Button onPress={createFavourite} title={'Like'} />
       </ListItem>
     </Card>
   );
