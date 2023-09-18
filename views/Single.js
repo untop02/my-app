@@ -1,60 +1,77 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
-import {SafeAreaView, StyleSheet, Text} from 'react-native';
 import {mediaUrl} from '../utils/app-config';
-import {Card} from '@rneui/base';
+import {formatDate} from '../utils/functions';
+import {Card, Icon, Text, ListItem} from '@rneui/themed';
+import {Video} from 'expo-av';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useUser} from '../hooks/ApiHooks';
 
 const Single = ({route, navigation}) => {
-  const singleMedia = route.params;
+  const [owner, setOwner] = useState({});
+  const {getUserById} = useUser();
+  const {
+    title,
+    description,
+    filename,
+    time_added: timeAdded,
+    user_id: userId,
+    filesize,
+    media_type: mediaType,
+  } = route.params;
+
+  // fetch owner info
+  const fetchOwner = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      const ownerData = await getUserById(userId, token);
+      setOwner(ownerData);
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchOwner();
+  }, []);
+
+  // Show full image and metadata
   return (
-    <SafeAreaView style={styles.container}>
-      <Card style={styles.textAndImage}>
+    <Card>
+      <Card.Title>{title}</Card.Title>
+      {mediaType === 'image' ? (
         <Card.Image
-          style={styles.image}
-          source={{uri: mediaUrl + singleMedia.thumbnails.w160}}
+          source={{uri: mediaUrl + filename}}
+          resizeMode="center"
+          style={{height: 300}}
         />
-        <Text style={styles.title}>{singleMedia.title}</Text>
-        <Text>{singleMedia.description}</Text>
-        <Text>File ID: {singleMedia.file_id}</Text>
-        <Text>User ID: {singleMedia.user_id}</Text>
-        <Text>Time added: {singleMedia.time_added}</Text>
-      </Card>
-    </SafeAreaView>
+      ) : (
+        <Video
+          source={{uri: mediaUrl + filename}}
+          style={{height: 300}}
+          useNativeControls={true}
+          shouldPlay={true}
+          isLooping={true}
+        />
+      )}
+      <ListItem>
+        <Text>{description}</Text>
+      </ListItem>
+      <ListItem>
+        <Icon name="save" />
+        <Text>{Math.round(filesize / 1024)} kB</Text>
+      </ListItem>
+      <ListItem>
+        <Icon name="today" />
+        <Text>{formatDate(timeAdded)}</Text>
+      </ListItem>
+      <ListItem>
+        <Icon name="person" />
+        <Text>username: {owner.username}</Text>
+      </ListItem>
+    </Card>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingTop: 40,
-  },
-  image: {
-    paddingLeft: '100%',
-    paddingTop: '100%',
-  },
-  textAndImage: {
-    width: '100%',
-    flex: 1,
-    backgroundColor: 'lightgrey',
-    padding: 20,
-    marginBottom: 20,
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'start',
-  },
-  text: {
-    padding: 20,
-    width: 200,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-});
 
 Single.propTypes = {
   navigation: PropTypes.object,
